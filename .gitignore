@@ -1,0 +1,7 @@
+.vscode
+obj
+bin
+*.ll
+*.bc
+*.o
+*.s
