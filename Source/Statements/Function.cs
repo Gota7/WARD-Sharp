@@ -74,7 +74,7 @@ public class Function : Variable {
         // Check function body to make sure it returns what we expect.
         bool alreadyReturnsVoid;
         if (!Definition.ReturnsType((Type as VarTypeFunction).ReturnType, out alreadyReturnsVoid)) {
-            Error.ThrowInternal("Function \"" + Name + "\" returns type \"" + (Type as VarTypeFunction).ReturnType.ToString() + "\", which is not what is expected.");
+            Error.ThrowInternal("Function \"" + Name + "\" returns type \"" + (Type as VarTypeFunction).ReturnType.ToString() + "\", which is not what was returned.");
             return;
         }
 

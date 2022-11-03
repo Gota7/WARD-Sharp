@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WARD-Sharp", "Source\WARD-Sharp.csproj", "{834346E8-0A21-4801-B7F3-9DE1E4E41C69}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4E7B03B5-B81B-4A4F-B06E-5642F5D70CEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "Tests\HelloWorld\HelloWorld.csproj", "{1D7E844C-8D29-47CB-89D4-5439677E09A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{834346E8-0A21-4801-B7F3-9DE1E4E41C69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{834346E8-0A21-4801-B7F3-9DE1E4E41C69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{834346E8-0A21-4801-B7F3-9DE1E4E41C69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{834346E8-0A21-4801-B7F3-9DE1E4E41C69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D7E844C-8D29-47CB-89D4-5439677E09A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D7E844C-8D29-47CB-89D4-5439677E09A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D7E844C-8D29-47CB-89D4-5439677E09A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D7E844C-8D29-47CB-89D4-5439677E09A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D7E844C-8D29-47CB-89D4-5439677E09A2} = {4E7B03B5-B81B-4A4F-B06E-5642F5D70CEB}
+	EndGlobalSection
+EndGlobal
