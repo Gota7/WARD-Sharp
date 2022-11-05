@@ -1,5 +1,6 @@
 using LLVMSharp.Interop;
 using WARD.Exceptions;
+using WARD.Statements;
 
 namespace WARD.Builders;
 
@@ -9,6 +10,7 @@ public delegate void AddOptimizationPassesFunc(LLVMPassManagerRef fpm);
 // For building an entire program.
 public class ProgramBuilder {
     private Dictionary<string, UnitBuilder> CompilationUnits = new Dictionary<string, UnitBuilder>(); // Individual compilation units.
+    private List<UnitManager> UnitManagers = new List<UnitManager>(); // A bunch of unit managers.
     private AddOptimizationPassesFunc Optimizations; // Optimizations to apply to each unit.
     private bool Compiled = false;
 
@@ -17,13 +19,21 @@ public class ProgramBuilder {
         Optimizations = optimizations;
     }
 
-    // Add a compilation unit.
-    public void AddCompilationUnit(UnitBuilder ub) {
+    // Add a unit builder.
+    public void AddUnitBuilder(UnitBuilder ub) {
         if (CompilationUnits.ContainsKey(ub.Path)) {
             Error.ThrowInternal("Compilation unit with same path \"" + ub.Path + "\" has already been added.");
             return;
         }
         CompilationUnits.Add(ub.Path, ub);
+    }
+
+    // Add a unit manager.
+    public void AddUnitManager(UnitManager um) {
+        var ubs = um.GetUnits();
+        foreach (var ub in ubs) {
+            AddUnitBuilder(ub);
+        }
     }
 
     // Compile the program.
@@ -129,6 +139,12 @@ public class ProgramBuilder {
             Error.ThrowInternal("Program does not have a main function to execute.");
             return -1;
         }
+        foreach (var unit in CompilationUnits) {
+            var func2 = unit.Value.LLVMModule.GetNamedFunction("main");
+            if (func2 == null) {
+                exe.AddModule(unit.Value.LLVMModule); // Add only modules that do not contain main.
+            }
+        }
 
         // Set proper envp if none and execute main.
         if (envp == null) envp = new string[0];
@@ -136,17 +152,28 @@ public class ProgramBuilder {
     }
 
     // Get a function to execute from the compiled program. NOTE: Does not support variadic arguments!
-    // public TDelegate GetFunctionExecuter<TDelegate>(Function function) {
+    public TDelegate GetFunctionExecuter<TDelegate>(string compilationUnit, Function function) {
+        if (!Compiled) {
+            Error.ThrowInternal("Program has not been compiled yet.");
+            throw new Exception();
+        }
+        if (!CompilationUnits.ContainsKey(compilationUnit)) {
+            Error.ThrowInternal("Program does not contain compilation unit \"" + compilationUnit + "\".");
+            throw new Exception();
+        }
 
-    //     // Initialize engine.
-    //     ExecutionEngine.InitializeAllTargets();
-    //     var exe = Mods.ElementAt(0).Value.CreateMCJITCompiler();
+        // Initialize engine.
+        ExecutionEngine.InitializeAllTargets();
+        var exe = CompilationUnits[compilationUnit].LLVMModule.CreateMCJITCompiler();
+        foreach (var unit in CompilationUnits) {
+            if (!unit.Key.Equals(compilationUnit)) exe.AddModule(unit.Value.LLVMModule); // Link other built units.
+        }
 
-    //     // Get args and function.
-    //     LLVMValueRef func = Mods.ElementAt(0).Value.GetNamedFunction(function.ToString());
-    //     var exeFunc = exe.GetPointerToGlobal<TDelegate>(func);
-    //     return exeFunc;
+        // Get args and function.
+        LLVMValueRef func = function.Value;
+        var exeFunc = exe.GetPointerToGlobal<TDelegate>(func);
+        return exeFunc;
 
-    // }
+    }
 
 }

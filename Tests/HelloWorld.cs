@@ -5,6 +5,7 @@ using WARD.Statements;
 using WARD.Types;
 using Xunit;
 
+// Test a basic hello world program.
 public class HelloWorld {
 
     [Fact]
@@ -29,7 +30,7 @@ public class HelloWorld {
         main.Define(body);
 
         // Compile program.
-        pb.AddCompilationUnit(ub);
+        pb.AddUnitBuilder(ub);
         pb.Compile();
 
         // Exporting of different types and execution example.

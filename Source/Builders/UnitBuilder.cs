@@ -1,6 +1,5 @@
 using LLVMSharp.Interop;
 using WARD.Common;
-using WARD.Exceptions;
 using WARD.Expressions;
 using WARD.Scoping;
 using WARD.Statements;
@@ -9,8 +8,7 @@ using WARD.Types;
 namespace WARD.Builders;
 
 // For building individual compilation units.
-public class UnitBuilder : IDisposable {
-    private bool Disposed = false; // If the builder has been disposed or not.
+public class UnitBuilder {
     private List<Function> Functions = new List<Function>(); // Functions that are managed by this unit builder.
     private List<Variable> Globals = new List<Variable>(); // Global variables managed by this unit builder.
     public Scope Scope { get; } = new Scope();
@@ -31,11 +29,12 @@ public class UnitBuilder : IDisposable {
     }
 
     // Add a global variable. TODO: ALLOW CONSTANT EXPRESSIONS?
-    public void AddGlobal(string name, VarType type, Expression value = null) {
+    public LLVMValueRef AddGlobal(string name, VarType type, Expression value = null) {
         if (value != null) throw new System.NotImplementedException();
         var variable = new Variable(name, type);
         Scope.Table.AddVariable(variable);
         Globals.Add(variable);
+        return Globals.Last().Value;
     }
 
     // Compile the unit.
@@ -60,14 +59,6 @@ public class UnitBuilder : IDisposable {
         // Return build module.
         return LLVMModule;
 
-    }
-
-    // Dispose the unit builder.
-    public void Dispose() {
-        if (Disposed) {
-            Error.ThrowInternal("Unit builder has already been disposed of.");
-        }
-        Disposed = true;
     }
 
 }
