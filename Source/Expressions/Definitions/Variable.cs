@@ -77,7 +77,9 @@ public class ExpressionVariable : Expression {
 
     }
 
-    protected override VarType ReturnType() => LValue ? new VarTypeLValueReference(Resolved.Type.GetVarType(), DataAccessFlags.Read) : Resolved.Type.GetVarType();
+    protected override VarType ReturnType() => LValue ? new VarTypeLValueReference(Resolved.Type.GetVarType(Scope), DataAccessFlags.Read) : Resolved.Type.GetVarType(Scope);
+
+    public override bool Constant() => false;
 
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
         return Resolved.Value;

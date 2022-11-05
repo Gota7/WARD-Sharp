@@ -13,6 +13,10 @@ public class UnitManager {
 
     // Add a new compilation unit. Ideally you should add all your compilation units before you add functions.
     public void AddUnit(string path) {
+        if (Units.ContainsKey(path)) {
+            Error.ThrowInternal("Compilation unit \"" + path + "\" already exists.");
+            return;
+        }
         Units.Add(path, new UnitBuilder(path));
     }
 

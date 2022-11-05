@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Expressions;
+using WARD.Scoping;
 
 namespace WARD.Types;
 
@@ -21,28 +22,22 @@ public class VarTypePointer : VarType {
         PointedTo = pointedTo;
     }
 
-    public override VarType GetVarType() => this;
-    protected override LLVMTypeRef LLVMType() => LLVMTypeRef.CreatePointer(PointedTo.GetLLVMType(), 0);
+    public override VarType GetVarType(Scope scope) => this;
+    protected override LLVMTypeRef LLVMType(Scope scope) => LLVMTypeRef.CreatePointer(PointedTo.GetLLVMType(scope), 0);
     public override string Mangled() => "p" + PointedTo.Mangled();
 
-    protected override bool Equals(VarType other) {
-        var o = other as VarTypePointer;
+    protected override bool Equals(VarType other, Scope scope) {
+        var o = other.GetVarType(scope) as VarTypePointer;
         if (o != null) {
-            return PointedTo.Equals(o.PointedTo);
+            return PointedTo.Equals(o.PointedTo, scope);
         }
         return false;
-    }
-
-    public override int GetHashCode() {
-        HashCode ret = new HashCode();
-        ret.Add(PointedTo);
-        return ret.ToHashCode();
     }
 
     public override string ToString() {
         return PointedTo.ToString() + "*";
     }
 
-    public override Expression DefaultValue() => NullPointer;
+    public override Expression DefaultValue(Scope scope) => NullPointer;
 
 }

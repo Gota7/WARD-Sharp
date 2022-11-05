@@ -37,7 +37,14 @@ public class ExpressionLLVM : Expression {
         }
     }
 
-    protected override VarType ReturnType() => RetType.GetVarType();
+    protected override VarType ReturnType() => RetType.GetVarType(Scope);
+
+    public override bool Constant() {
+        foreach (var a in Args) {
+            if (!a.Constant()) return false;
+        }
+        return true;
+    }
 
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
 

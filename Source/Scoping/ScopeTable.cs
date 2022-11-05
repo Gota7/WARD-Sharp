@@ -122,4 +122,28 @@ public class ScopeTable {
 
     }
 
+    // Resolve a type.
+    public VarType ResolveType(string path) {
+
+        // Split base path and name.
+        ScopeTable match = FindWithMatchingBasepath(path);
+        string typeName = GetItemName(path);
+        if (match == null) return null;
+
+        // Type found, all is well.
+        if (match.Types.ContainsKey(typeName)) {
+            return match.Types[typeName];
+        }
+
+        // Type not found, search parent if possible.
+        else {
+            if (match.Scope.Parent != null) {
+                return match.Scope.Parent.Table.ResolveType(path);
+            } else {
+                return null;
+            }
+        }
+
+    }
+
 }

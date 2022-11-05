@@ -15,8 +15,10 @@ public class ExpressionConstBool : Expression {
 
     protected override VarType ReturnType() => VarType.Bool;
 
+    public override bool Constant() => true;
+
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
-        return LLVMValueRef.CreateConstInt(ReturnType().GetLLVMType(), Value ? 1u : 0u, false);
+        return LLVMValueRef.CreateConstInt(ReturnType().GetLLVMType(Scope), Value ? 1u : 0u, false);
     }
 
     public override string ToString() => Value ? "true" : "false";

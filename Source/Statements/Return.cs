@@ -7,6 +7,7 @@ namespace WARD.Statements;
 
 // A return statement to return a value.
 public class StatementReturn : Statement {
+    private Scope Scope; // Scope.
     public Expression ReturnExpression { get; } // Return value for the return.
 
     // Create a new return statement. Leave null for void.
@@ -15,6 +16,7 @@ public class StatementReturn : Statement {
     }
     
     public override void SetScopes(Scope parent) {
+        Scope = parent;
         if (ReturnExpression != null) ReturnExpression.SetScopes(parent);
     }
 
@@ -29,9 +31,9 @@ public class StatementReturn : Statement {
     public override bool ReturnsType(VarType type, out bool outExplicitVoidReturn) {
         outExplicitVoidReturn = true; // If we are returning anything, then it is explicit.
         if (ReturnExpression != null) {
-            return type.Equals(ReturnExpression.GetReturnType());
+            return type.Equals(ReturnExpression.GetReturnType(), Scope);
         } else {
-            return type.Equals(VarType.Void);
+            return type.Equals(VarType.Void, Scope);
         }
     }
 

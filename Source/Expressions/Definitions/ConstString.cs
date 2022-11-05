@@ -15,6 +15,8 @@ public class ExpressionConstString : Expression {
 
     protected override VarType ReturnType() => VarType.String;
 
+    public override bool Constant() => true;
+
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
         return builder.BuildGlobalStringPtr(Str, "W_ConstStr_" + Str);
     }

@@ -2,6 +2,7 @@ using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
 using WARD.Expressions;
+using WARD.Scoping;
 
 namespace WARD.Types;
 
@@ -17,6 +18,14 @@ public partial class VarType {
     public static VarTypeSimple Bool = new VarTypeSimple(VarTypeSimpleEnum.Bool);
     public static VarTypeSimple Object = new VarTypeSimple(VarTypeSimpleEnum.Object);
     public static VarTypeSimple Void = new VarTypeSimple(VarTypeSimpleEnum.Void);
+
+    // If a type is void.
+    public bool IsVoid() {
+        var simple = this as VarTypeSimple;
+        if (simple != null && simple.SimpleType == VarTypeSimpleEnum.Void) return true;
+        return false;
+    }
+
 }
 
 // Simple type.
@@ -28,8 +37,8 @@ public class VarTypeSimple : VarType {
         SimpleType = simpleType;
     }
 
-    public override VarType GetVarType() => this;
-    protected override LLVMTypeRef LLVMType() {
+    public override VarType GetVarType(Scope scope) => this;
+    protected override LLVMTypeRef LLVMType(Scope scope) {
         switch (SimpleType) {
             case VarTypeSimpleEnum.Bool: return LLVMTypeRef.Int1;
             case VarTypeSimpleEnum.Object: return LLVMTypeRef.CreatePointer(LLVMTypeRef.Int8, 0);
@@ -50,18 +59,12 @@ public class VarTypeSimple : VarType {
         }
     }
 
-    protected override bool Equals(VarType other) {
-        var o = other as VarTypeSimple;
+    protected override bool Equals(VarType other, Scope scope) {
+        var o = other.GetVarType(scope) as VarTypeSimple;
         if (o != null) {
             return SimpleType == o.SimpleType;
         }
         return false;
-    }
-
-    public override int GetHashCode() {
-        HashCode ret = new HashCode();
-        ret.Add(SimpleType);
-        return ret.ToHashCode();
     }
 
     public override string ToString() {
@@ -75,7 +78,7 @@ public class VarTypeSimple : VarType {
         }
     }
 
-    public override Expression DefaultValue() {
+    public override Expression DefaultValue(Scope scope) {
         switch (SimpleType) {
             case VarTypeSimpleEnum.Bool: return new ExpressionConstBool(false);
             default:

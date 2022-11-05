@@ -2,6 +2,7 @@ using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
 using WARD.Expressions;
+using WARD.Scoping;
 
 namespace WARD.Types;
 
@@ -18,29 +19,23 @@ public class VarTypeLValueReference : VarType {
         }
     }
 
-    public override VarType GetVarType() => this;
-    protected override LLVMTypeRef LLVMType() => LLVMTypeRef.CreatePointer(Referenced.GetLLVMType(), 0);
+    public override VarType GetVarType(Scope scope) => this;
+    protected override LLVMTypeRef LLVMType(Scope scope) => LLVMTypeRef.CreatePointer(Referenced.GetLLVMType(scope), 0);
     public override string Mangled() => "L" + Referenced.Mangled();
 
-    protected override bool Equals(VarType other) {
-        var o = other as VarTypeLValueReference;
+    protected override bool Equals(VarType other, Scope scope) {
+        var o = other.GetVarType(scope) as VarTypeLValueReference;
         if (o != null) {
-            return Referenced.Equals(o.Referenced);
+            return Referenced.Equals(o.Referenced, scope);
         }
         return false;
-    }
-
-    public override int GetHashCode() {
-        HashCode ret = new HashCode();
-        ret.Add(Referenced);
-        return ret.ToHashCode();
     }
 
     public override string ToString() {
         return Referenced.ToString() + "&";
     }
 
-    public override Expression DefaultValue() {
+    public override Expression DefaultValue(Scope scope) {
         Error.ThrowInternal("A reference type can not have a default value.");
         return null;
     }

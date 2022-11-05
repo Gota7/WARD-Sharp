@@ -26,7 +26,7 @@ public class Function : Variable {
         builder.Scope.Table.AddFunction(this);
         Scope = builder.Scope.EnterScope(Name);
         foreach (var param in (Type as VarTypeFunction).Parameters) {
-            Scope.Table.AddVariable(new Variable(param.Name, param.Type.GetVarType()));
+            Scope.Table.AddVariable(new Variable(param.Name, param.Type));
         }
     }
 
@@ -60,7 +60,7 @@ public class Function : Variable {
         // Shadow parameters and define the rest of the variables.
         uint paramIndex = 0;
         foreach (var param in (Type as VarTypeFunction).Parameters) {
-            var value = builder.BuildAlloca(param.Type.GetLLVMType());
+            var value = builder.BuildAlloca(param.Type.GetLLVMType(Scope));
             builder.BuildStore(Value.Params[paramIndex++], value);
             Scope.Table.ResolveVariable(param.Name).Value = value;
         }

@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Expressions;
+using WARD.Scoping;
 
 namespace WARD.Types;
 
@@ -22,6 +23,7 @@ public partial class VarType {
     public static VarTypeInteger UInt { get; } = UInt32_t;
     public static VarTypeInteger Long { get; } = Int64_t;
     public static VarTypeInteger ULong { get; } = UInt64_t;
+
 }
 
 // Integer type.
@@ -35,29 +37,22 @@ public class VarTypeInteger : VarType {
         BitWidth = bitWidth;
     }
 
-    public override VarType GetVarType() => this;
-    protected override LLVMTypeRef LLVMType() => LLVMTypeRef.CreateInt(BitWidth);
+    public override VarType GetVarType(Scope scope) => this;
+    protected override LLVMTypeRef LLVMType(Scope scope) => LLVMTypeRef.CreateInt(BitWidth);
     public override string Mangled() => (Signed ? "s" : "u") + BitWidth.ToString() + "E";
 
-    protected override bool Equals(VarType other) {
-        var o = other as VarTypeInteger;
+    protected override bool Equals(VarType other, Scope scope) {
+        var o = other.GetVarType(scope) as VarTypeInteger;
         if (o != null) {
             return Signed == o.Signed && BitWidth == o.BitWidth;
         }
         return false;
     }
 
-    public override int GetHashCode() {
-        HashCode ret = new HashCode();
-        ret.Add(Signed);
-        ret.Add(BitWidth);
-        return ret.ToHashCode();
-    }
-
     public override string ToString() {
         return (Signed ? "s" : "u") + BitWidth.ToString();
     }
 
-    public override Expression DefaultValue() => new ExpressionConstInt(this, 0);
+    public override Expression DefaultValue(Scope scope) => new ExpressionConstInt(this, 0);
 
 }

@@ -37,17 +37,22 @@ public class UnitBuilder {
         return Globals.Last().Value;
     }
 
+    // Add a type alias.
+    public void AddAlias(string name, VarType type) {
+        Scope.Table.AddType(name, type);
+    }
+
     // Compile the unit.
     public LLVMModuleRef Compile(LLVMPassManagerRef fpm) {
 
         // Go through global definitions.
         foreach (var global in Globals) {
-            global.Value = LLVMModule.AddGlobal(global.Type.GetLLVMType(), global.Name);
+            global.Value = LLVMModule.AddGlobal(global.Type.GetLLVMType(Scope), global.Name);
         }
 
         // Go through function declarations first.
         foreach (var function in Functions) {
-            if (!function.Inline) function.Value = LLVMModule.AddFunction(function.Name, function.Type.GetLLVMType());
+            if (!function.Inline) function.Value = LLVMModule.AddFunction(function.Name, function.Type.GetLLVMType(Scope));
         }
 
         // Define each function now.

@@ -17,8 +17,10 @@ public class ExpressionConstInt : Expression {
 
     protected override VarType ReturnType() => IntType;
 
+    public override bool Constant() => true;
+
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
-        return LLVMValueRef.CreateConstInt(IntType.GetLLVMType(), Value, IntType.Signed);
+        return LLVMValueRef.CreateConstInt(IntType.GetLLVMType(Scope), Value, IntType.Signed);
     }
 
     public override string ToString() => "((" + IntType.ToString() + ")" + (IntType.Signed ? ((long)Value).ToString() : Value.ToString()) + ")";

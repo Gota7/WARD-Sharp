@@ -45,7 +45,9 @@ public class ExpressionCall : Expression {
         FuncType = calleeType as VarTypeFunction;
     }
 
-    protected override VarType ReturnType() => FuncType.ReturnType.GetVarType();
+    protected override VarType ReturnType() => FuncType.ReturnType.GetVarType(Scope);
+
+    public override bool Constant() => false;
 
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
         var callee = Callee.Compile(mod, builder); // This is important for function pointers where we must get the function value.
@@ -61,7 +63,7 @@ public class ExpressionCall : Expression {
             throw new System.NotImplementedException();
 
         }
-        return builder.BuildCall2(FuncType.GetLLVMType(), callee, args);
+        return builder.BuildCall2(FuncType.GetLLVMType(Scope), callee, args);
     }
 
     public override string ToString() {

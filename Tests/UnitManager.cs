@@ -1,4 +1,3 @@
-// For testing the unit manager.
 using System.Runtime.InteropServices;
 using WARD.Builders;
 using WARD.Common;
@@ -7,6 +6,7 @@ using WARD.Statements;
 using WARD.Types;
 using Xunit;
 
+// For testing the unit manager.
 public class UnitManagerTests {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

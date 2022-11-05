@@ -24,10 +24,13 @@ public abstract class Expression : Statement {
     public override void ResolveTypes() => ResolveTypes(null, null);
 
     // Get the return type. Use this instead of ReturnType.
-    public VarType GetReturnType() => ReturnType().GetVarType();
+    public VarType GetReturnType() => ReturnType().GetVarType(Scope);
 
     // Get the return type of an expression.
     protected abstract VarType ReturnType();
+
+    // If the expression type is constant.
+    public abstract bool Constant();
 
     // Compile any variable definitions.
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {}
@@ -35,7 +38,7 @@ public abstract class Expression : Statement {
     // Statements are not return values.
     public override bool ReturnsType(VarType type, out bool outExplicitVoidReturn) {
         outExplicitVoidReturn = false;
-        return type.Equals(VarType.Void);
+        return type.Equals(VarType.Void, Scope);
     }
 
 }

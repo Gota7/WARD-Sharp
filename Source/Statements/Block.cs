@@ -7,6 +7,7 @@ namespace WARD.Statements;
 
 // A block of statements. A block has its own new scope and multiple statements.
 public class StatementBlock : Statement {
+    private Scope Scope; // Scope.
     private static int BlockId = 0; // Block ID.
     public List<Statement> Statements; // Statements in the block.
 
@@ -16,6 +17,7 @@ public class StatementBlock : Statement {
     }
     
     public override void SetScopes(Scope parent) {
+        Scope = parent;
         foreach (var statement in Statements) {
             statement.SetScopes(parent.EnterScope("%CODESTATEMENT%_" + BlockId++));
         }
@@ -52,7 +54,7 @@ public class StatementBlock : Statement {
 
         // Made it through the end, error unless type is void.
         outExplicitVoidReturn = false;
-        return type.Equals(VarType.Void);
+        return type.Equals(VarType.Void, Scope);
 
     }
 
