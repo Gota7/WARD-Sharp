@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -54,5 +55,7 @@ public class VarTypeInteger : VarType {
     }
 
     public override Expression DefaultValue(Scope scope) => new ExpressionConstInt(this, 0);
+
+    public override VarType Instantiate(InstantiationInfo info) => this;
 
 }

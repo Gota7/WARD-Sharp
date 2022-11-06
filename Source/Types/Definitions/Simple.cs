@@ -2,6 +2,7 @@ using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -86,5 +87,7 @@ public class VarTypeSimple : VarType {
                 return null;
         }
     }
+
+    public override VarType Instantiate(InstantiationInfo info) => this;
 
 }

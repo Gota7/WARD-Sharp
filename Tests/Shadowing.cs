@@ -17,7 +17,7 @@ public class ShadowingTests
     public int TestBase(Statement definition, int input) {
         ProgramBuilder pb = new ProgramBuilder();
         UnitBuilder ub = new UnitBuilder("TestMod");
-        var test = ub.AddFunction("test", new VarTypeFunction(VarType.Int, null, new Variable("arg", VarType.Int)), new ItemAttribute("NoMangle"));
+        var test = ub.AddFunction("test", new VarTypeFunction(VarType.Int, null, new Variable("arg", VarType.Int)), "", new ItemAttribute("NoMangle"));
         test.Define(definition);
         pb.AddUnitBuilder(ub);
         pb.Compile();

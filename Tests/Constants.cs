@@ -20,7 +20,7 @@ public class ConstantTests
     public TDelegate BaseTest<TDelegate>(VarType retType, Statement definition) {
         ProgramBuilder pb = new ProgramBuilder();
         UnitBuilder ub = new UnitBuilder("TestMod");
-        var test = ub.AddFunction("test", new VarTypeFunction(retType), new ItemAttribute("NoMangle"));
+        var test = ub.AddFunction("test", new VarTypeFunction(retType), "", new ItemAttribute("NoMangle"));
         test.Define(definition);
         pb.AddUnitBuilder(ub);
         pb.Compile();

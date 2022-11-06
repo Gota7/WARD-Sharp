@@ -1,4 +1,5 @@
 using LLVMSharp.Interop;
+using WARD.Generics;
 using WARD.Statements;
 using WARD.Types;
 
@@ -28,5 +29,7 @@ public class ExpressionConstPointer : Expression {
     }
 
     public override string ToString() => Value == null ? "NULL" : ("0x" + Value.Value.ToString("X"));
+
+    public override Statement Instantiate(InstantiationInfo info) => new ExpressionConstPointer(PointerType.Instantiate(info) as VarTypePointer, Value);
 
 }

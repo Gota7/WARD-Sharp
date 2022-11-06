@@ -151,6 +151,31 @@ public class ProgramBuilder {
         return exe.RunFunctionAsMain(func, (uint)args.Length, args, envp);
     }
 
+    // Get a function to execute from the compiled program using a name. NOTE: Does not support variadic arguments!
+    public TDelegate GetFunctionExecuterFromUnmangledName<TDelegate>(string compilationUnit, string name) {
+        if (!Compiled) {
+            Error.ThrowInternal("Program has not been compiled yet.");
+            throw new Exception();
+        }
+        if (!CompilationUnits.ContainsKey(compilationUnit)) {
+            Error.ThrowInternal("Program does not contain compilation unit \"" + compilationUnit + "\".");
+            throw new Exception();
+        }
+
+        // Initialize engine.
+        ExecutionEngine.InitializeAllTargets();
+        var exe = CompilationUnits[compilationUnit].LLVMModule.CreateMCJITCompiler();
+        foreach (var unit in CompilationUnits) {
+            if (!unit.Key.Equals(compilationUnit)) exe.AddModule(unit.Value.LLVMModule); // Link other built units.
+        }
+
+        // Get args and function.
+        LLVMValueRef func = CompilationUnits[compilationUnit].LLVMModule.GetNamedFunction(name);
+        var exeFunc = exe.GetPointerToGlobal<TDelegate>(func);
+        return exeFunc;
+
+    }
+
     // Get a function to execute from the compiled program. NOTE: Does not support variadic arguments!
     public TDelegate GetFunctionExecuter<TDelegate>(string compilationUnit, Function function) {
         if (!Compiled) {

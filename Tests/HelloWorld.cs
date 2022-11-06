@@ -20,7 +20,7 @@ public class HelloWorld {
             VarType.Int,
             null,
             new Variable("str", VarType.String)
-        ), new ItemAttribute("NoMangle"));
+        ), "", new ItemAttribute("NoMangle"));
 
         // Add main function and define it.
         var main = ub.AddFunction("main", new VarTypeFunction(VarType.Int));

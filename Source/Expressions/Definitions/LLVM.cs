@@ -1,5 +1,6 @@
 using LLVMSharp.Interop;
 using WARD.Exceptions;
+using WARD.Generics;
 using WARD.Scoping;
 using WARD.Statements;
 using WARD.Types;
@@ -258,6 +259,14 @@ public class ExpressionLLVM : Expression {
             if (i != Args.Length - 1) ret += ", ";
         }
         return ret + ")";
+    }
+
+    public override Statement Instantiate(InstantiationInfo info) {
+        Expression[] parameters = new Expression[Args.Length];
+        for (int i = 0; i < parameters.Length; i++) {
+            parameters[i] = Args[i].Instantiate(info) as Expression;
+        }
+        return new ExpressionLLVM(Instruction, RetType.Instantiate(info), parameters);
     }
 
 }

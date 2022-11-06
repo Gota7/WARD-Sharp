@@ -17,7 +17,7 @@ public class LLVMTests
     public int IntTest(string func, int a, int b) {
         ProgramBuilder pb = new ProgramBuilder();
         UnitBuilder ub = new UnitBuilder("TestMod");
-        var test = ub.AddFunction("test", new VarTypeFunction(VarType.Int, null, new Variable("a", VarType.Int), new Variable("b", VarType.Int)), new ItemAttribute("NoMangle"));
+        var test = ub.AddFunction("test", new VarTypeFunction(VarType.Int, null, new Variable("a", VarType.Int), new Variable("b", VarType.Int)), "", new ItemAttribute("NoMangle"));
         test.Define(new StatementReturn(new ExpressionLLVM(func, VarType.Int, new ExpressionConstInt(VarType.Int, (ulong)a), new ExpressionConstInt(VarType.Int, (ulong)b))));
         pb.AddUnitBuilder(ub);
         pb.Compile();

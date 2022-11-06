@@ -1,5 +1,6 @@
 using LLVMSharp.Interop;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 using WARD.Types;
 
@@ -14,7 +15,7 @@ public class StatementReturn : Statement {
     public StatementReturn(Expression returnExpression = null) {
         ReturnExpression = returnExpression;
     }
-    
+
     public override void SetScopes(Scope parent) {
         Scope = parent;
         if (ReturnExpression != null) ReturnExpression.SetScopes(parent);
@@ -48,5 +49,7 @@ public class StatementReturn : Statement {
             return builder.BuildRetVoid();
         }
     }
+
+    public override Statement Instantiate(InstantiationInfo info) => new StatementReturn(ReturnExpression == null ? null : (ReturnExpression.Instantiate(info) as Expression));
 
 }

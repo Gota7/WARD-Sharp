@@ -2,6 +2,7 @@ using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -61,5 +62,8 @@ public abstract partial class VarType {
 
     // Get the default value of the type.
     public abstract Expression DefaultValue(Scope scope);
+
+    // Instantiate this type if it is generic or has generic components.
+    public abstract VarType Instantiate(InstantiationInfo info);
 
 }

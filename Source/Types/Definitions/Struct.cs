@@ -2,6 +2,7 @@ using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -53,6 +54,14 @@ public class VarTypeStruct : VarType {
             expressions[i] = Members[i].Type.GetVarType(scope).DefaultValue(scope);
         }
         return new ExpressionConstStruct(this, expressions);
+    }
+
+    public override VarType Instantiate(InstantiationInfo info) {
+        Variable[] members = new Variable[Members.Length];
+        for (int i = 0; i < members.Length; i++) {
+            members[i] = new Variable(Members[i].Name, Members[i].Type.Instantiate(info));
+        }
+        return new VarTypeStruct(AccessFlags, members);
     }
 
 }

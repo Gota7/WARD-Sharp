@@ -22,24 +22,24 @@ public class UnitBuilder {
     }
 
     // Add a new function to the scope table.
-    public Function AddFunction(string name, VarTypeFunction signature, params ItemAttribute[] attributes) {
-        var func = new Function(this, name, signature, attributes);
+    public Function AddFunction(string name, VarTypeFunction signature, string scope = "", params ItemAttribute[] attributes) {
+        var func = new Function(this, name, signature, scope, attributes);
         Functions.Add(func);
         return func;
     }
 
     // Add a global variable. TODO: ALLOW CONSTANT EXPRESSIONS?
-    public LLVMValueRef AddGlobal(string name, VarType type, Expression value = null) {
+    public LLVMValueRef AddGlobal(string name, VarType type, Expression value = null, string scope = "") {
         if (value != null) throw new System.NotImplementedException();
         var variable = new Variable(name, type);
-        Scope.Table.AddVariable(variable);
+        Scope.EnterScope(scope).Table.AddVariable(variable);
         Globals.Add(variable);
         return Globals.Last().Value;
     }
 
     // Add a type alias.
-    public void AddAlias(string name, VarType type) {
-        Scope.Table.AddType(name, type);
+    public void AddAlias(string name, VarType type, string scope = "") {
+        Scope.EnterScope(scope).Table.AddType(name, type);
     }
 
     // Compile the unit.

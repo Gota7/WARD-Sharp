@@ -19,12 +19,12 @@ public class Function : Variable {
     public override string ToString() => NameMangled ? ("_W" + Scope.Parent.Mangled() + FuncName.Length + FuncName + "E" + Type.Mangled()) : Name;
 
     // Create a new function. Automatically adds it to the unit builder's scope table.
-    public Function(UnitBuilder builder, string name, VarTypeFunction signature, params ItemAttribute[] attributes) : base(name.Length + name + signature.Mangled(), signature) {
+    public Function(UnitBuilder builder, string name, VarTypeFunction signature, string scope = "", params ItemAttribute[] attributes) : base(name.Length + name + signature.Mangled(), signature) {
         FuncName = name;
         Attributes = attributes;
         if (!NameMangled) Name = name;
         builder.Scope.Table.AddFunction(this);
-        Scope = builder.Scope.EnterScope(Name);
+        Scope = builder.Scope.EnterScope(scope).EnterScope(name);
         foreach (var param in (Type as VarTypeFunction).Parameters) {
             Scope.Table.AddVariable(new Variable(param.Name, param.Type));
         }

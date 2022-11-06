@@ -1,4 +1,5 @@
 using LLVMSharp.Interop;
+using WARD.Generics;
 using WARD.Statements;
 using WARD.Types;
 
@@ -22,5 +23,7 @@ public class ExpressionConstString : Expression {
     }
 
     public override string ToString() => "\"" + Str + "\"";
+
+    public override Statement Instantiate(InstantiationInfo info) => this;
 
 }

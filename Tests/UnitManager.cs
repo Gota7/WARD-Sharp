@@ -22,16 +22,16 @@ public class UnitManagerTests {
         um.AddUnit("AddConsts");
 
         // Define the addition function to test.
-        var add = um.AddFunction("AddConsts", "add", new VarTypeFunction(VarType.Int), new ItemAttribute("NoMangle"));
+        var add = um.AddFunction("AddConsts", "add", new VarTypeFunction(VarType.Int), "", new ItemAttribute("NoMangle"));
         add.Define(new StatementReturn(new ExpressionLLVM("add", VarType.Int,
             new ExpressionCall(new ExpressionVariable("return5")),
             new ExpressionCall(new ExpressionVariable("return7"))
         )));
 
         // Define constant functions.
-        var return5 = um.AddFunction("Const5", "return5", new VarTypeFunction(VarType.Int), new ItemAttribute("NoMangle"));
+        var return5 = um.AddFunction("Const5", "return5", new VarTypeFunction(VarType.Int), "", new ItemAttribute("NoMangle"));
         return5.Define(new StatementReturn(new ExpressionConstInt(VarType.Int, 5)));
-        var return7 = um.AddFunction("Const7", "return7", new VarTypeFunction(VarType.Int), new ItemAttribute("NoMangle"));
+        var return7 = um.AddFunction("Const7", "return7", new VarTypeFunction(VarType.Int), "", new ItemAttribute("NoMangle"));
         return7.Define(new StatementReturn(new ExpressionConstInt(VarType.Int, 7)));
         pb.AddUnitManager(um);
 
@@ -44,5 +44,5 @@ public class UnitManagerTests {
         Assert.Equal(12, func());
 
     }
-    
+
 }

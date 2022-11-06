@@ -19,8 +19,8 @@ public class AliasTests
         ProgramBuilder pb = new ProgramBuilder();
         UnitBuilder ub = new UnitBuilder("TestMod");
         ub.AddAlias("Number", VarType.Int);
-        var test = ub.AddFunction("test", new VarTypeFunction(new VarTypeAlias("Number")), new ItemAttribute("NoMangle"));
-        test.Define(new StatementReturn(new ExpressionConstInt(VarType.Int, 7)));
+        var test = ub.AddFunction("test", new VarTypeFunction(new VarTypeAlias("Number")), "", new ItemAttribute("NoMangle"));
+        test.Define(new StatementReturn(new ExpressionConstInt(new VarTypeAlias("Number"), 7)));
         //test.Define(new StatementReturn(new ExpressionConstPointer(new VarTypePointer(VarType.Int)))); // Should fail.
         pb.AddUnitBuilder(ub);
         pb.Compile();

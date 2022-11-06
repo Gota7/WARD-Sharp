@@ -1,4 +1,5 @@
 using LLVMSharp.Interop;
+using WARD.Generics;
 using WARD.Statements;
 using WARD.Types;
 
@@ -22,5 +23,7 @@ public class ExpressionConstBool : Expression {
     }
 
     public override string ToString() => Value ? "true" : "false";
+
+    public override Statement Instantiate(InstantiationInfo info) => this;
 
 }

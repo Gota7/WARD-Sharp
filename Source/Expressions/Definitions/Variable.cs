@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
+using WARD.Generics;
 using WARD.Scoping;
 using WARD.Statements;
 using WARD.Types;
@@ -86,5 +87,7 @@ public class ExpressionVariable : Expression {
     }
 
     public override string ToString() => Path;
+
+    public override Statement Instantiate(InstantiationInfo info) => this;
 
 }

@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -39,5 +40,7 @@ public class VarTypePointer : VarType {
     }
 
     public override Expression DefaultValue(Scope scope) => NullPointer;
+
+    public override VarType Instantiate(InstantiationInfo info) => new VarTypePointer(PointedTo.Instantiate(info), AccessFlags);
 
 }

@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -33,5 +34,7 @@ public class VarTypeAlias : VarType {
     }
 
     public override Expression DefaultValue(Scope scope) => GetVarType(scope).DefaultValue(scope);
+
+    public override VarType Instantiate(InstantiationInfo info) => this;
 
 }

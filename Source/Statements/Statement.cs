@@ -1,5 +1,6 @@
 using LLVMSharp.Interop;
 using WARD.Exceptions;
+using WARD.Generics;
 using WARD.Scoping;
 using WARD.Types;
 
@@ -25,5 +26,8 @@ public abstract class Statement {
 
     // Compile the expression.
     public abstract LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder);
+
+    // Instantiate this statement if it is generic or has generic components.
+    public abstract Statement Instantiate(InstantiationInfo info);
 
 }

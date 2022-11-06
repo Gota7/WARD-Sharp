@@ -2,6 +2,7 @@ using LLVMSharp.Interop;
 using WARD.Common;
 using WARD.Exceptions;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 
 namespace WARD.Types;
@@ -39,5 +40,7 @@ public class VarTypeLValueReference : VarType {
         Error.ThrowInternal("A reference type can not have a default value.");
         return null;
     }
+
+    public override VarType Instantiate(InstantiationInfo info) => new VarTypeLValueReference(Referenced.Instantiate(info), AccessFlags);
 
 }

@@ -1,5 +1,6 @@
 using LLVMSharp.Interop;
 using WARD.Expressions;
+using WARD.Generics;
 using WARD.Scoping;
 using WARD.Types;
 
@@ -15,7 +16,7 @@ public class StatementBlock : Statement {
     public StatementBlock(params Statement[] statements) {
         Statements = statements.ToList();
     }
-    
+
     public override void SetScopes(Scope parent) {
         Scope = parent;
         foreach (var statement in Statements) {
@@ -36,7 +37,7 @@ public class StatementBlock : Statement {
     }
 
     public override bool ReturnsType(VarType type, out bool outExplicitVoidReturn) {
-        
+
         // This one is more interesting.
         // If we come across a statement that returns false, we should return false since the return type doesn't match ours.
         // However, there is an exception to this. It's possible the statement is just an expression that doesn't do anything (no return).
@@ -71,6 +72,14 @@ public class StatementBlock : Statement {
             else statement.Compile(mod, builder);
         }
         return null;
+    }
+
+    public override Statement Instantiate(InstantiationInfo info) {
+        Statement[] statements = new Statement[Statements.Count];
+        for (int i = 0; i < statements.Length; i++) {
+            statements[i] = Statements[i].Instantiate(info);
+        }
+        return new StatementBlock(statements);
     }
 
 }
