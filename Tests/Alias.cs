@@ -21,11 +21,29 @@ public class AliasTests
         ub.AddAlias("Number", VarType.Int);
         var test = ub.AddFunction("test", new VarTypeFunction(new VarTypeAlias("Number")), "", new ItemAttribute("NoMangle"));
         test.Define(new StatementReturn(new ExpressionConstInt(new VarTypeAlias("Number"), 7)));
-        //test.Define(new StatementReturn(new ExpressionConstPointer(new VarTypePointer(VarType.Int)))); // Should fail.
         pb.AddUnitBuilder(ub);
         pb.Compile();
         var func = pb.GetFunctionExecuter<ReturnInt>("TestMod", test);
         Assert.Equal(7, func());
+    }
+
+    // Test type aliasing to a wrong type.
+    private void AliasTestCrashBody() {
+        ProgramBuilder pb = new ProgramBuilder();
+        UnitBuilder ub = new UnitBuilder("TestMod");
+        ub.AddAlias("Number", VarType.Int);
+        var test = ub.AddFunction("test", new VarTypeFunction(new VarTypeAlias("Number")), "", new ItemAttribute("NoMangle"));
+        test.Define(new StatementReturn(new ExpressionConstPointer(new VarTypePointer(VarType.Int)))); // Should fail.
+        pb.AddUnitBuilder(ub);
+        pb.Compile();
+        var func = pb.GetFunctionExecuter<ReturnInt>("TestMod", test);
+        Assert.Equal(0, func());
+    }
+
+    // Test type aliasing to a wrong type.
+    [Fact]
+    public void AliasTestCrash() {
+        Assert.ThrowsAny<Exception>(AliasTestCrashBody);
     }
 
 }
