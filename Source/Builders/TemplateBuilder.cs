@@ -13,6 +13,7 @@ public class TemplateBuilder {
     public string CurrCompilationUnit; // The current compilation unit to instantiate with.
     public TemplateParameter[] Parameters { get; } // Template parameters used to instance functions or classes.
     private List<FunctionDeclarationInfo> Functions = new List<FunctionDeclarationInfo>(); // Functions to instantiate.
+    private Dictionary<string, bool> Instantiations = new Dictionary<string, bool>(); // Instances that have been defined.
 
     // Info for declaring a function.
     private class FunctionDeclarationInfo {
@@ -44,6 +45,14 @@ public class TemplateBuilder {
 
     // Create an instantiation of the template with definitions in the current compilation unit.
     public void Instantiate(params object[] parameters) {
+
+        // Don't make an instance if it already exists.
+        string key = parameters.Length.ToString();
+        foreach (var parameter in parameters) {
+            key += "B" + parameter.ToString().Length + parameter.ToString() + "E";
+        }
+        if (Instantiations.ContainsKey(key)) return;
+        else Instantiations.Add(key, false);
 
         // Make sure all the types are correct.
         if (Parameters.Length != parameters.Length) {
