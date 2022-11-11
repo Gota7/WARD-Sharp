@@ -71,16 +71,13 @@ public class Function : Variable {
         Definition.ResolveVariables();
         Definition.ResolveTypes();
 
-        // Check function body to make sure it returns what we expect.
-        bool alreadyReturnsVoid;
-        if (!Definition.ReturnsType((Type as VarTypeFunction).ReturnType, out alreadyReturnsVoid)) {
-            Error.ThrowInternal("Function \"" + Name + "\" returns type \"" + (Type as VarTypeFunction).ReturnType.ToString() + "\", which is not what was returned.");
-            return;
-        }
-
         // Finally compile the function, and add a return void if needed.
         Definition.Compile(mod, builder);
-        if (!alreadyReturnsVoid && (Type as VarTypeFunction).ReturnType.Equals(VarType.Void)) {
+        if (!Definition.ReturnsType()) {
+            if (!(Type as VarTypeFunction).ReturnType.Equals(VarType.Void, Scope)) {
+                Error.ThrowInternal("Function \"" + Name + "\" does not return \"" + (Type as VarTypeFunction).ReturnType.ToString() + "\" as expected.");
+                return;
+            }
             builder.BuildRetVoid();
         }
 

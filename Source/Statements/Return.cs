@@ -6,7 +6,7 @@ using WARD.Types;
 
 namespace WARD.Statements;
 
-// A return statement to return a value.
+// A return statement to return a value. TODO: CAST RETURN EXPRESSION!!!
 public class StatementReturn : Statement {
     private Scope Scope; // Scope.
     public Expression ReturnExpression { get; } // Return value for the return.
@@ -29,14 +29,7 @@ public class StatementReturn : Statement {
         if (ReturnExpression != null) ReturnExpression.ResolveTypes();
     }
 
-    public override bool ReturnsType(VarType type, out bool outExplicitVoidReturn) {
-        outExplicitVoidReturn = true; // If we are returning anything, then it is explicit.
-        if (ReturnExpression != null) {
-            return type.Equals(ReturnExpression.GetReturnType(), Scope);
-        } else {
-            return type.Equals(VarType.Void, Scope);
-        }
-    }
+    public override bool ReturnsType() => true; // It's a return statement, what did you expect.
 
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
         if (ReturnExpression != null) ReturnExpression.CompileDeclarations(mod, builder);

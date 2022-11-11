@@ -18,8 +18,8 @@ public abstract class Statement {
     // Resolve types in the statement.
     public abstract void ResolveTypes();
 
-    // If the statement returns a type (only true for return statements). Since it's impossible to know if return as been used for void, another variable for if it has been detected exists.
-    public abstract bool ReturnsType(VarType type, out bool outExplicitVoidReturn);
+    // If the statement returns a type (if it does itself or all its children do).
+    public abstract bool ReturnsType();
 
     // Compile any variable definitions.
     public abstract void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder);

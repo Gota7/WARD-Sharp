@@ -36,27 +36,11 @@ public class StatementBlock : Statement {
         }
     }
 
-    public override bool ReturnsType(VarType type, out bool outExplicitVoidReturn) {
-
-        // This one is more interesting.
-        // If we come across a statement that returns false, we should return false since the return type doesn't match ours.
-        // However, there is an exception to this. It's possible the statement is just an expression that doesn't do anything (no return).
-        // Thus, we first need to check if the return is a void, and ignore it if it is unless it is explicit.
-        // If we are not ignoring it, we then check if the type matches ours and return the result.
-        // If we make it to the end, then we are implicitly returning void.
-
-        // Go through each statement.
+    public override bool ReturnsType() {
         foreach (var statement in Statements) {
-            bool returnsVoid = statement.ReturnsType(VarType.Void, out outExplicitVoidReturn);
-            if (returnsVoid && outExplicitVoidReturn || !returnsVoid) {
-                return statement.ReturnsType(type, out outExplicitVoidReturn);
-            }
+            if (statement.ReturnsType()) return true;
         }
-
-        // Made it through the end, error unless type is void.
-        outExplicitVoidReturn = false;
-        return type.Equals(VarType.Void, Scope);
-
+        return false;
     }
 
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {

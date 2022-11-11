@@ -50,6 +50,13 @@ public class ExpressionCall : Expression {
 
     public override bool Constant() => false;
 
+    public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
+        Callee.CompileDeclarations(mod, builder);
+        foreach (var arg in Args) {
+            arg.CompileDeclarations(mod, builder);
+        }
+    }
+
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
         var callee = Callee.Compile(mod, builder); // This is important for function pointers where we must get the function value.
         LLVMValueRef[] args = new LLVMValueRef[Args.Length];

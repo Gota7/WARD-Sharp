@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace WARD.Generics;
 
 // Type of template parameter.
@@ -17,6 +19,24 @@ public class TemplateParameter {
         Name = name;
         Type = type;
         Concept = concept;
+    }
+
+    public override bool Equals(object obj) {
+        var tp = obj as TemplateParameter;
+        if (tp != null) {
+            if (!Name.Equals(tp.Name)) return false;
+            if (Type != tp.Type) return false;
+            return Concept.Equals(tp.Concept);
+        }
+        return false;
+    }
+
+    public override int GetHashCode() {
+        HashCode hc = new HashCode();
+        hc.Add(Name);
+        hc.Add(Type);
+        hc.Add(Concept);
+        return hc.ToHashCode();
     }
 
 }

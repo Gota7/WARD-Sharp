@@ -47,6 +47,12 @@ public class ExpressionLLVM : Expression {
         return true;
     }
 
+    public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
+        foreach (var arg in Args) {
+            arg.CompileDeclarations(mod, builder);
+        }
+    }
+
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
 
         // Compile arguments first.

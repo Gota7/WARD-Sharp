@@ -63,6 +63,10 @@ public class ExpressionIndex : Expression {
 
     public override bool Constant() => false;
 
+    public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
+        Operand.CompileDeclarations(mod, builder);
+    }
+
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
         if (IsStruct) {
             return builder.BuildStructGEP2(GetReturnType().GetLLVMType(Scope), Operand.Compile(mod, builder), Index);

@@ -36,9 +36,6 @@ public abstract class Expression : Statement {
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {}
 
     // Statements are not return values.
-    public override bool ReturnsType(VarType type, out bool outExplicitVoidReturn) {
-        outExplicitVoidReturn = false;
-        return type.Equals(VarType.Void, Scope);
-    }
+    public override bool ReturnsType() => false;
 
 }
