@@ -31,18 +31,22 @@ public class StatementReturn : Statement {
 
     public override bool ReturnsType() => true; // It's a return statement, what did you expect.
 
+    public override bool EndsBlock() => true;
+
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
         if (ReturnExpression != null) ReturnExpression.CompileDeclarations(mod, builder);
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         if (ReturnExpression != null) {
-            return builder.BuildRet(ReturnExpression.Compile(mod, builder));
+            return builder.BuildRet(ReturnExpression.Compile(mod, builder, ctx));
         } else {
             return builder.BuildRetVoid();
         }
     }
 
     public override Statement Instantiate(InstantiationInfo info) => new StatementReturn(ReturnExpression == null ? null : (ReturnExpression.Instantiate(info) as Expression));
+
+    public override string ToString() => ReturnExpression == null ? "return;" : ("return " + ReturnExpression.ToString() + ";");
 
 }

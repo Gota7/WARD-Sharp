@@ -82,7 +82,7 @@ public class ExpressionVariable : Expression {
 
     public override bool Constant() => false;
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         return Resolved.Value;
     }
 

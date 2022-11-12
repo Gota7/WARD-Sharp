@@ -33,7 +33,7 @@ public class ExpressionGeneric : Expression {
         return true;
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         Error.ThrowInternal("Can not compile uninstantiated generic \"" + Template + "\".");
         return null;
     }

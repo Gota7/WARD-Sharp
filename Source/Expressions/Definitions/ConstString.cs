@@ -18,7 +18,7 @@ public class ExpressionConstString : Expression {
 
     public override bool Constant() => true;
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         return builder.BuildGlobalStringPtr(Str, "W_ConstStr_" + Str);
     }
 

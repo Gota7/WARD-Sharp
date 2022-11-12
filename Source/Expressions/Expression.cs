@@ -35,7 +35,10 @@ public abstract class Expression : Statement {
     // Compile any variable definitions.
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {}
 
-    // Statements are not return values.
+    // Expressions are not return values.
     public override bool ReturnsType() => false;
+
+    // Expressions do not end a block.
+    public override bool EndsBlock() => false;
 
 }

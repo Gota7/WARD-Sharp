@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>

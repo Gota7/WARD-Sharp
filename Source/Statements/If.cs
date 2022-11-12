@@ -16,7 +16,7 @@ public class StatementIf : Statement {
 
     // Create a new if statement.
     public StatementIf(Expression condition, Statement thenStatement, Statement elseStatement = null) {
-        Condition = condition;
+        Condition = new ExpressionRValue(condition); // A condition must always be an R-Value.
         ThenStatement = thenStatement;
         ElseStatement = elseStatement;
     }
@@ -36,7 +36,7 @@ public class StatementIf : Statement {
 
     public override void ResolveTypes() {
         Condition.ResolveTypes();
-        if (Condition.GetReturnType().Equals(VarType.Bool, Scope)) {
+        if (!Condition.GetReturnType().Equals(VarType.Bool, Scope)) {
             Error.ThrowInternal("If statement return type must be a boolean expression.");
             return;
         }
@@ -50,43 +50,51 @@ public class StatementIf : Statement {
         else return false;
     }
 
+    public override bool EndsBlock() {
+        if (!ThenStatement.EndsBlock()) return false; // Both statements need to end, so quit now.
+        if (ElseStatement != null && ElseStatement.EndsBlock()) return true; // Both statements end the block.
+        else return false;
+    }
+
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
         Condition.CompileDeclarations(mod, builder);
         ThenStatement.CompileDeclarations(mod, builder);
         if (ElseStatement != null) ElseStatement.CompileDeclarations(mod, builder);
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
 
         // Add blocks.
-        LLVMValueRef func = null; // TODO: FIGURE OUT HOW TO GET THIS!!!
-        LLVMBasicBlockRef thenBlock = LLVMBasicBlockRef.AppendInContext(mod.Context, func, "ifThen");
+        LLVMBasicBlockRef thenBlock = LLVMBasicBlockRef.AppendInContext(mod.Context, ctx.Func, "ifThen");
         LLVMBasicBlockRef elseBlock = null;
-        if (ElseStatement != null) elseBlock = LLVMBasicBlockRef.AppendInContext(mod.Context, func, "ifElse");
-        LLVMBasicBlockRef contBlock = LLVMBasicBlockRef.AppendInContext(mod.Context, func, "ifCont");
+        if (ElseStatement != null) elseBlock = LLVMBasicBlockRef.AppendInContext(mod.Context, ctx.Func, "ifElse");
+        LLVMBasicBlockRef contBlock = null;
+        if (!EndsBlock()) contBlock = LLVMBasicBlockRef.AppendInContext(mod.Context, ctx.Func, "ifCont"); // Only define continuation if no returns.
 
         // Compile the condition.
-        LLVMValueRef condition = Condition.Compile(mod, builder);
+        LLVMValueRef condition = Condition.Compile(mod, builder, ctx);
         builder.BuildCondBr(condition, thenBlock, elseBlock == null ? contBlock : elseBlock);
 
         // Compile the then statement.
         builder.PositionAtEnd(thenBlock);
-        ThenStatement.Compile(mod, builder);
-        if (!ThenStatement.ReturnsType()) builder.BuildBr(contBlock);
+        ThenStatement.Compile(mod, builder, ctx);
+        if (!ThenStatement.EndsBlock()) builder.BuildBr(contBlock); // Will only occur if both then and else end the block.
 
         // Compile the else statement.
         if (ElseStatement != null) {
             builder.PositionAtEnd(elseBlock);
-            ElseStatement.Compile(mod, builder);
-            if (!ElseStatement.ReturnsType()) builder.BuildBr(contBlock);
+            ElseStatement.Compile(mod, builder, ctx);
+            if (!ElseStatement.EndsBlock()) builder.BuildBr(contBlock); // Will only occur if both then and else end a block.
         }
 
         // Place at new continuation. Statement return value isn't really used so just null it.
-        builder.PositionAtEnd(contBlock);
+        if (contBlock != null) builder.PositionAtEnd(contBlock);
         return null;
 
     }
 
     public override Statement Instantiate(InstantiationInfo info) => new StatementIf(Condition.Instantiate(info) as Expression, ThenStatement.Instantiate(info), ElseStatement == null ? null : ElseStatement.Instantiate(info));
+
+    public override string ToString() => "if (" + Condition.ToString() + ")" + ThenStatement.ToString() + (ElseStatement != null ? ("else " + ElseStatement.ToString()) : "");
 
 }

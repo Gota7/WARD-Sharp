@@ -20,7 +20,7 @@ public class ExpressionConstPointer : Expression {
 
     public override bool Constant() => true;
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         if (Value != null) {
             return builder.BuildIntToPtr(LLVMValueRef.CreateConstInt(LLVMTypeRef.Int64, Value.Value, false), PointerType.GetLLVMType(Scope));
         } else {

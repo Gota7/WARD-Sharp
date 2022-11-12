@@ -11,16 +11,18 @@ public class StatementBlock : Statement {
     private Scope Scope; // Scope.
     private static int BlockId = 0; // Block ID.
     public List<Statement> Statements; // Statements in the block.
+    private int Id { get; } // Id of this block.
 
     // Create a new return statement.
     public StatementBlock(params Statement[] statements) {
         Statements = statements.ToList();
+        Id = BlockId++;
     }
 
     public override void SetScopes(Scope parent) {
         Scope = parent;
         foreach (var statement in Statements) {
-            statement.SetScopes(parent.EnterScope("%CODESTATEMENT%_" + BlockId++));
+            statement.SetScopes(parent.EnterScope("%CODESTATEMENT%_" + Id));
         }
     }
 
@@ -38,22 +40,30 @@ public class StatementBlock : Statement {
 
     public override bool ReturnsType() {
         foreach (var statement in Statements) {
-            if (statement.ReturnsType()) return true;
+            if (statement.EndsBlock()) return statement.ReturnsType(); // Block is ending, it either returns or not.
+        }
+        return false;
+    }
+
+    public override bool EndsBlock()
+    {
+        foreach (var statement in Statements) {
+            if (statement.EndsBlock()) return true; // Exit early if found exit.
         }
         return false;
     }
 
     public override void CompileDeclarations(LLVMModuleRef mod, LLVMBuilderRef builder) {
         foreach (var statement in Statements) {
-            statement.CompileDeclarations(mod, builder);
-            if (statement as StatementReturn != null) return; // Return if needed.
+            if (statement.EndsBlock()) { statement.CompileDeclarations(mod, builder); return; } // Exit early.
+            else statement.CompileDeclarations(mod, builder);
         }
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         foreach (var statement in Statements) {
-            if (statement as StatementReturn != null) return statement.Compile(mod, builder); // Return value if needed.
-            else statement.Compile(mod, builder);
+            if (statement.EndsBlock()) return statement.Compile(mod, builder, ctx); // Return value if needed.
+            else statement.Compile(mod, builder, ctx);
         }
         return null;
     }
@@ -64,6 +74,14 @@ public class StatementBlock : Statement {
             statements[i] = Statements[i].Instantiate(info);
         }
         return new StatementBlock(statements);
+    }
+
+    public override string ToString() {
+        string ret = "{\n";
+        foreach (var statement in Statements) {
+            ret += statement.ToString() + "\n";
+        }
+        return ret + "}";
     }
 
 }

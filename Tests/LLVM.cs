@@ -22,9 +22,7 @@ public class LLVMTests
         pb.AddUnitBuilder(ub);
         pb.Compile();
         BinaryInt32Operation op = pb.GetFunctionExecuter<BinaryInt32Operation>("TestMod", test);
-        int res = op(a, b);
-        Console.WriteLine(func + "(" + a + ", " + b + ") = " + res);
-        return res;
+        return op(a, b);
     }
 
     [Fact]

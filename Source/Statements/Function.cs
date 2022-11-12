@@ -72,7 +72,7 @@ public class Function : Variable {
         Definition.ResolveTypes();
 
         // Finally compile the function, and add a return void if needed.
-        Definition.Compile(mod, builder);
+        Definition.Compile(mod, builder, new CompilationContext(Value));
         if (!Definition.ReturnsType()) {
             if (!(Type as VarTypeFunction).ReturnType.Equals(VarType.Void, Scope)) {
                 Error.ThrowInternal("Function \"" + Name + "\" does not return \"" + (Type as VarTypeFunction).ReturnType.ToString() + "\" as expected.");

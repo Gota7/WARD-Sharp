@@ -21,7 +21,7 @@ public class ExpressionConstInt : Expression {
 
     public override bool Constant() => true;
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         var intType = IntType.GetVarType(Scope) as VarTypeInteger;
         if (intType == null) {
             Error.ThrowInternal("Type \"" + IntType.ToString() + "\" is not a valid int type for constant number \"" + Value + "\".");

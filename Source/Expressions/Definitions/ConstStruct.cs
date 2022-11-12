@@ -25,13 +25,13 @@ public class ExpressionConstStruct : Expression {
 
     public override bool Constant() => true;
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         foreach (var expression in Expressions) {
             if (!expression.Constant()) {
                 Error.ThrowInternal("Constant struct has non-constant expression \"" + expression.ToString() + "\".");
             }
         }
-        return LLVMValueRef.CreateConstStruct(Expressions.Select(x => x.Compile(mod, builder)).ToArray(), false);
+        return LLVMValueRef.CreateConstStruct(Expressions.Select(x => x.Compile(mod, builder, ctx)).ToArray(), false);
     }
 
     public override string ToString() {

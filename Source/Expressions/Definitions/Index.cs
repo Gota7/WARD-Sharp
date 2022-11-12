@@ -67,11 +67,11 @@ public class ExpressionIndex : Expression {
         Operand.CompileDeclarations(mod, builder);
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         if (IsStruct) {
-            return builder.BuildStructGEP2(GetReturnType().GetLLVMType(Scope), Operand.Compile(mod, builder), Index);
+            return builder.BuildStructGEP2(GetReturnType().GetLLVMType(Scope), Operand.Compile(mod, builder, ctx), Index);
         } else {
-            return builder.BuildGEP2(GetReturnType().GetLLVMType(Scope), Operand.Compile(mod, builder), new LLVMValueRef[] { LLVMValueRef.CreateConstInt(LLVMTypeRef.Int32, Index) });
+            return builder.BuildGEP2(GetReturnType().GetLLVMType(Scope), Operand.Compile(mod, builder, ctx), new LLVMValueRef[] { LLVMValueRef.CreateConstInt(LLVMTypeRef.Int32, Index) });
         }
     }
 

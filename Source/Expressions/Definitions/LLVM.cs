@@ -53,12 +53,12 @@ public class ExpressionLLVM : Expression {
         }
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
 
         // Compile arguments first.
         LLVMValueRef[] args = new LLVMValueRef[Args.Length];
         for (int i = 0; i < args.Length; i++) {
-            args[i] = Args[i].Compile(mod, builder);
+            args[i] = Args[i].Compile(mod, builder, ctx);
         }
 
         // Execute instruction.

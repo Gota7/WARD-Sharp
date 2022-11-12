@@ -7,8 +7,7 @@ using WARD.Types;
 using Xunit;
 
 // For testing type aliasing.
-public class AliasTests
-{
+public class AliasTests {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     delegate int ReturnInt();

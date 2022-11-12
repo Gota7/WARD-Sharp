@@ -37,8 +37,8 @@ public class ExpressionRValue : Expression {
         Operand.CompileDeclarations(mod, builder);
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
-        LLVMValueRef val = Operand.Compile(mod, builder);
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
+        LLVMValueRef val = Operand.Compile(mod, builder, ctx);
         if (LValue) return builder.BuildLoad2(Operand.GetReturnType().GetLLVMType(Scope), val);
         else return val;
     }

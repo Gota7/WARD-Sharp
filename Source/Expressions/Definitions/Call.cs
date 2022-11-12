@@ -57,11 +57,11 @@ public class ExpressionCall : Expression {
         }
     }
 
-    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder) {
-        var callee = Callee.Compile(mod, builder); // This is important for function pointers where we must get the function value.
+    public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
+        var callee = Callee.Compile(mod, builder, ctx); // This is important for function pointers where we must get the function value.
         LLVMValueRef[] args = new LLVMValueRef[Args.Length];
         for (int i = 0; i < args.Length; i++) {
-            args[i] = Args[i].Compile(mod, builder);
+            args[i] = Args[i].Compile(mod, builder, ctx);
         }
         if (callee == null) {
 
