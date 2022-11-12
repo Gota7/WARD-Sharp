@@ -21,6 +21,7 @@ public class ExpressionLLVM : Expression {
     }
 
     public override void SetScopes(Scope parent) {
+        Scope = parent;
         foreach (var a in Args) {
             a.SetScopes(parent);
         }

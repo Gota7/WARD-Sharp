@@ -28,6 +28,11 @@ public class ExpressionIndex : Expression {
         Index = index;
     }
 
+    public override void SetScopes(Scope parent) {
+        Scope = parent;
+        Operand.SetScopes(parent);
+    }
+
     public override void ResolveVariables() {
         Operand.ResolveVariables();
     }

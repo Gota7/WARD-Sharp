@@ -114,12 +114,76 @@ public class ControlFlowTests {
     // TODO: TESTS FOR EDGE CASES OF RETURN, BREAK, AND CONTINUE IN LOOPS!!!
 
     // Test a simple do while loop.
-    // [Fact]
-    // public void DoWhileTest() {
-    //     int val = TestBase(
+    [Fact]
+    public void DoWhileTest() {
+        int val = TestBase(
+            new StatementBlock(
+                new StatementVariable(VarType.Int, new ExpressionConstInt(VarType.Int, 0), "i"),
+                new StatementDoWhileLoop(
+                    new ExpressionAssign(
+                        new ExpressionVariable("i"),
+                        new ExpressionLLVM(
+                            "sub",
+                            VarType.Int,
+                            new ExpressionRValue(new ExpressionVariable("i")),
+                            new ExpressionConstInt(VarType.Int, 1)
+                        )
+                    ),
+                    new ExpressionLLVM(
+                        "and",
+                        VarType.Bool,
+                        new ExpressionLLVM(
+                            "icmpslt",
+                            VarType.Bool,
+                            new ExpressionRValue(new ExpressionVariable("i")),
+                            new ExpressionConstInt(VarType.Int, 0)
+                        ),
+                        new ExpressionLLVM(
+                            "icmpne",
+                            VarType.Bool,
+                            new ExpressionRValue(new ExpressionVariable("i")),
+                            new ExpressionLLVM(
+                                "sub",
+                                VarType.Int,
+                                new ExpressionConstInt(VarType.Int, 0),
+                                new ExpressionConstInt(VarType.Int, 3)
+                            )
+                        )
+                    )
+                ),
+                new StatementReturn(new ExpressionRValue(new ExpressionVariable("i")))
+            )
+        );
+        Assert.Equal(-3, val);
+    }
 
-    //     );
-    //     Assert.Equal(8, val);
-    // }
+    // Test a simple while loop.
+    [Fact]
+    public void WhileTest() {
+        int val = TestBase(
+            new StatementBlock(
+                new StatementVariable(VarType.Int, new ExpressionConstInt(VarType.Int, 4), "i"),
+                new StatementWhileLoop(
+                    new ExpressionAssign(
+                        new ExpressionVariable("i"),
+                        new ExpressionLLVM(
+                            "add",
+                            VarType.Int,
+                            new ExpressionRValue(new ExpressionVariable("i")),
+                            new ExpressionConstInt(VarType.Int, 2)
+                        )
+                    ),
+                    new ExpressionLLVM(
+                        "icmpslt",
+                        VarType.Bool,
+                        new ExpressionRValue(new ExpressionVariable("i")),
+                        new ExpressionConstInt(VarType.Int, 7)
+                    )
+                ),
+                new StatementReturn(new ExpressionRValue(new ExpressionVariable("i")))
+            )
+        );
+        Assert.Equal(8, val);
+    }
 
 }

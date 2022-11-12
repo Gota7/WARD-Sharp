@@ -5,3 +5,4 @@ bin
 *.bc
 *.o
 *.s
+TestResults

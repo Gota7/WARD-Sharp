@@ -6,8 +6,8 @@ using WARD.Statements;
 using WARD.Types;
 using Xunit;
 
-// For testing variable shadowing.
-public class ShadowingTests
+// For testing scopes.
+public class ScopeTests
 {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -26,11 +26,29 @@ public class ShadowingTests
     }
 
     // Test if basic arguments work.
-    // [Fact]
-    // public void ArgumentTest() {
-    //     Assert.Equal(404, TestBase(new StatementBlock(
-    //         new StatementReturn(new ExpressionVariable("arg"))
-    //     ), 404));
-    // }
+    [Fact]
+    public void ArgumentTest() {
+        Assert.Equal(404, TestBase(
+            new StatementReturn(new ExpressionRValue(new ExpressionVariable("arg"))),
+            404
+        ));
+    }
+
+    // Test if variable declarations work.
+    [Fact]
+    public void VariableTest() {
+        Assert.Equal(80 | 64, TestBase(
+            new StatementBlock(
+                new StatementVariable(VarType.Int, new ExpressionConstInt(VarType.Int, 64), "val"),
+                new StatementReturn(new ExpressionLLVM(
+                    "or",
+                    VarType.Int,
+                    new ExpressionRValue(new ExpressionVariable("arg")),
+                    new ExpressionRValue(new ExpressionVariable("val"))
+                ))
+            ),
+            80
+        ));
+    }
 
 }

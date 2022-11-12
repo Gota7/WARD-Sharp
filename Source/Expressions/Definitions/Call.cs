@@ -21,6 +21,7 @@ public class ExpressionCall : Expression {
     }
 
     public override void SetScopes(Scope parent) {
+        Scope = parent;
         Callee.SetScopes(parent);
         foreach (var a in Args) {
             a.SetScopes(parent);

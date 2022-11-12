@@ -1,6 +1,7 @@
 using LLVMSharp.Interop;
 using WARD.Exceptions;
 using WARD.Generics;
+using WARD.Scoping;
 using WARD.Statements;
 using WARD.Types;
 
@@ -14,6 +15,11 @@ public class ExpressionRValue : Expression {
     // Create a new R-Value expression.
     public ExpressionRValue(Expression operand) {
         Operand = operand;
+    }
+
+    public override void SetScopes(Scope parent) {
+        Scope = parent;
+        Operand.SetScopes(parent);
     }
 
     public override void ResolveVariables() {
@@ -39,7 +45,7 @@ public class ExpressionRValue : Expression {
 
     public override LLVMValueRef Compile(LLVMModuleRef mod, LLVMBuilderRef builder, CompilationContext ctx) {
         LLVMValueRef val = Operand.Compile(mod, builder, ctx);
-        if (LValue) return builder.BuildLoad2(Operand.GetReturnType().GetLLVMType(Scope), val);
+        if (LValue) return builder.BuildLoad2((Operand.GetReturnType() as VarTypeLValueReference).Referenced.GetLLVMType(Scope), val);
         else return val;
     }
 
