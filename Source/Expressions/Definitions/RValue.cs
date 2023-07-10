@@ -1,5 +1,4 @@
 using LLVMSharp.Interop;
-using WARD.Exceptions;
 using WARD.Generics;
 using WARD.Scoping;
 using WARD.Statements;
@@ -7,7 +6,7 @@ using WARD.Types;
 
 namespace WARD.Expressions;
 
-// Expression that is guaranteed to be an R-Value.
+// Expression that is guaranteed to be an R-Value. While a cast will work, they are a lot slower and so this should be used when possible.
 public class ExpressionRValue : Expression {
     public Expression Operand { get; } // Operand of the expression.
     private bool LValue; // If the operand is an L-Value.

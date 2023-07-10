@@ -12,6 +12,11 @@ public class UnitBuilder {
     private List<Function> Functions = new List<Function>(); // Functions that are managed by this unit builder.
     private List<Variable> Globals = new List<Variable>(); // Global variables managed by this unit builder.
     public Scope Scope { get; } = new Scope();
+    public ConversionSequence ConversionSequence = new ConversionSequence(
+        Conversion.Int2Bool,
+        Conversion.IntegerPromotion,
+        Conversion.LValue2RValue
+    ); // How to convert items, has default values.
     public string Path { get; } // Path of the unit.
     internal LLVMModuleRef LLVMModule { get; } // Stored LLVM module.
 
@@ -58,7 +63,7 @@ public class UnitBuilder {
         // Define each function now.
         LLVMBuilderRef builder = LLVMBuilderRef.Create(LLVMModule.Context);
         foreach (var function in Functions) {
-            if (!function.Inline) function.Compile(LLVMModule, builder, fpm);
+            if (!function.Inline) function.Compile(LLVMModule, builder, fpm, ConversionSequence);
         }
 
         // Return build module.

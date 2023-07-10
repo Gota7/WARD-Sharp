@@ -37,7 +37,7 @@ public class Function : Variable {
     }
 
     // Compile the function.
-    public void Compile(LLVMModuleRef mod, LLVMBuilderRef builder, LLVMPassManagerRef fpm) {
+    public void Compile(LLVMModuleRef mod, LLVMBuilderRef builder, LLVMPassManagerRef fpm, ConversionSequence conversionSequence) {
 
         // Check if inline.
         if (Inline) {
@@ -72,7 +72,7 @@ public class Function : Variable {
         Definition.ResolveTypes();
 
         // Finally compile the function, and add a return void if needed.
-        Definition.Compile(mod, builder, new CompilationContext(Value));
+        Definition.Compile(mod, builder, new CompilationContext(Value, conversionSequence));
         if (!Definition.ReturnsType()) {
             if (!(Type as VarTypeFunction).ReturnType.Equals(VarType.Void, Scope)) {
                 Error.ThrowInternal("Function \"" + Name + "\" does not return \"" + (Type as VarTypeFunction).ReturnType.ToString() + "\" as expected.");
@@ -93,7 +93,7 @@ public class Function : Variable {
     }
 
     // See if a function fits the overload. Distance is how many implicit casts need to be done.
-    public bool CallSatisfiesOverload(VarType[] args, out int distance) {
+    public bool CallSatisfiesOverload(VarType[] args, Scope scope, out int distance) {
         distance = 0;
         var sig = Type as VarTypeFunction;
 
@@ -106,8 +106,8 @@ public class Function : Variable {
         for (int i = 0; i < args.Length; i++) {
 
             // Case one, type matches.
-            if (args[i].Equals(sig.Parameters[i].Type)) {
-                // All good!
+            if (args[i].Equals(sig.Parameters[i].Type, scope)) {
+                continue; // All good!
             }
 
             // Case two implicit cast possible. Case three, not possible to call.

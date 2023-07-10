@@ -215,6 +215,9 @@ public class ExpressionLLVM : Expression {
             case "select":
                 VerifyArgs(3);
                 return builder.BuildSelect(args[0], args[1], args[2]);
+            case "sext":
+                VerifyArgs(1);
+                return builder.BuildSExt(args[0], RetType.GetLLVMType(Scope));
             case "shl":
                 VerifyArgs(2);
                 return builder.BuildShl(args[0], args[1]);
@@ -245,6 +248,9 @@ public class ExpressionLLVM : Expression {
             case "xor":
                 VerifyArgs(2);
                 return builder.BuildXor(args[0], args[1]);
+            case "zext":
+                VerifyArgs(1);
+                return builder.BuildZExt(args[0], RetType.GetLLVMType(Scope));
             default:
                 Error.ThrowInternal("Unknown LLVM instruction \"" + Instruction + "\".");
                 return null;

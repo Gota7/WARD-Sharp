@@ -1,6 +1,8 @@
 using LLVMSharp.Interop;
+using WARD.Common;
 using WARD.Exceptions;
 using WARD.Statements;
+using WARD.Types;
 
 namespace WARD.Builders;
 
@@ -11,8 +13,24 @@ public delegate void AddOptimizationPassesFunc(LLVMPassManagerRef fpm);
 public class ProgramBuilder {
     private Dictionary<string, UnitBuilder> CompilationUnits = new Dictionary<string, UnitBuilder>(); // Individual compilation units.
     private List<UnitManager> UnitManagers = new List<UnitManager>(); // A bunch of unit managers.
+    private List<Operator> Operators = new List<Operator>(); // Operators to add each unit manager.
     private AddOptimizationPassesFunc Optimizations; // Optimizations to apply to each unit.
     private bool Compiled = false;
+
+    // For holding operator info.
+    public class Operator {
+        public string Op { get; }
+        public VarTypeFunction Signature { get; }
+        public Statement Definition { get; }
+
+        // Make a new operator.
+        public Operator(string op, VarTypeFunction signature, Statement definition) {
+            Op = op;
+            Signature = signature;
+            Definition = definition;
+        }
+
+    }
 
     // Create a new program builder.
     public ProgramBuilder(AddOptimizationPassesFunc optimizations = null) {
@@ -26,6 +44,13 @@ public class ProgramBuilder {
             return;
         }
         CompilationUnits.Add(ub.Path, ub);
+
+        // Add operators to compilation unit. Make sure they are inlined to not cause trouble.
+        foreach (var op in Operators) {
+            var func = ub.AddFunction("%OP%_" + op.Op, op.Signature, "", new ItemAttribute("Inline"));
+            func.Define(op.Definition);
+        }
+
     }
 
     // Add a unit manager.
@@ -34,6 +59,16 @@ public class ProgramBuilder {
         foreach (var ub in ubs) {
             AddUnitBuilder(ub);
         }
+    }
+
+    // Add an operator to be used globally.
+    public void AddOperator(string op, VarTypeFunction signature, Statement definition) {
+        Operators.Add(new Operator(op, signature, definition));
+    }
+
+    // Add the standard WARD operators.
+    public void AddStandardOperators() {
+        Operators.Add(OperatorAdd.GetInt());
     }
 
     // Compile the program.

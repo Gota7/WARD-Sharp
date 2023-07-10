@@ -45,7 +45,7 @@ public class ExpressionVariable : Expression {
             List<Tuple<Function, int>> possibleFunctions = new List<Tuple<Function, int>>();
             foreach (var p in PossibleFunctions) {
                 int distance;
-                if (p.CallSatisfiesOverload(parameterTypes.ToArray(), out distance)) {
+                if (p.CallSatisfiesOverload(parameterTypes.ToArray(), Scope, out distance)) {
                     possibleFunctions.Add(new Tuple<Function, int>(p, distance));
                 }
             }

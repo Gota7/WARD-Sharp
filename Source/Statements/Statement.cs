@@ -1,4 +1,5 @@
 using LLVMSharp.Interop;
+using WARD.Builders;
 using WARD.Exceptions;
 using WARD.Generics;
 using WARD.Scoping;
@@ -24,11 +25,13 @@ public class LoopContext {
 // Context for compiling.
 public class CompilationContext {
     public LLVMValueRef Func { get; } // LLVM function.
+    public ConversionSequence ConversionSequence { get; }
     public Stack<LoopContext> Loops { get; } = new Stack<LoopContext>(); // Loops currently contained.
 
     // Create a new compilation context.
-    public CompilationContext(LLVMValueRef func) {
+    public CompilationContext(LLVMValueRef func, ConversionSequence conversionSequence) {
         Func = func;
+        ConversionSequence = conversionSequence;
     }
 
 }
